@@ -45,10 +45,10 @@ class Message:
       )
       for to_addr in recipients:
         logging.info(f"Sending message '{self.subject}' to {to_addr}")
-        try:
-          server.send_message(msg, from_addr=from_addr, to_addrs=to_addr)
-        except Exception as e:
-          logging.error(f"Failed to send '{self.subject}': {e}")
+      try:
+        server.send_message(msg, from_addr=from_addr, to_addrs=recipients)
+      except Exception as e:
+        logging.error(f"Failed to send '{self.subject}': {e}")
       logging.info(f"Successfully sent '{self.subject}'")
 
   def __str__(self):
