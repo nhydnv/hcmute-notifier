@@ -2,7 +2,9 @@ from dotenv import load_dotenv
 import requests
 import os
 
+# Return access token for HCMUTE APIs for this student
 def getAccessToken():
+  # Load username, password, API key
   load_dotenv()
 
   auth_url = "https://portalapi.hcmute.edu.vn/api/authenticate/authpsc"

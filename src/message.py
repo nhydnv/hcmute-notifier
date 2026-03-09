@@ -1,8 +1,8 @@
 from datetime import datetime, timedelta
-from fetch_messages import getGeneralMessages, getStudentMessages
 from bs4 import BeautifulSoup
 from email.message import EmailMessage
 import smtplib
+import logging
 import os
 
 class Message:
@@ -18,12 +18,12 @@ class Message:
     # A message is considered new if it was posted in the last 24 hours
     return (self.create_date <= now and self.create_date > now - timedelta(days=1))
   
-  def send(self, to_addr):
+  def send(self, recipients):
     from_addr = os.environ['SENDER']
     msg = EmailMessage()
     msg['Subject'] = f'[HCMUTE Portal] New Message: {self.subject}'
     msg['FROM'] = from_addr
-    msg['TO'] = to_addr
+    msg['TO'] = ", ".join(recipients)
 
     header = f'<p><strong>From:</strong> {self.sender}</p>' \
              f'<p><strong>Date:</strong> {self.create_date.strftime('%d/%m/%y')}</p>' \
@@ -43,7 +43,13 @@ class Message:
         from_addr,
         os.environ['SENDER_APP_PASSWORD'],
       )
-      server.send_message(msg, from_addr=from_addr, to_addrs=to_addr)
+      for to_addr in recipients:
+        logging.info(f"Sending message '{self.subject}' to {to_addr}")
+        try:
+          server.send_message(msg, from_addr=from_addr, to_addrs=to_addr)
+        except Exception as e:
+          logging.error(f"Failed to send '{self.subject}': {e}")
+      logging.info(f"Successfully sent '{self.subject}'")
 
   def __str__(self):
     return f"Message ID: {self.id}\nSubject: {self.subject}\n{self.body}"
