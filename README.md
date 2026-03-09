@@ -1,0 +1,1 @@
+little script that automatically checks for new messages on hcmute's student portal and sends them to my friend via email so she doesn't have to manually check them. clearly i am a very good friend
